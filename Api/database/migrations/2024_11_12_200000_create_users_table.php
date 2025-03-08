@@ -18,8 +18,6 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ["member", "leader"])->default('member');
-            $table->decimal('latitude', 9, 6)->nullable();
-            $table->decimal('longitude', 9, 6)->nullable();
             $table->boolean('term_aceite');
             $table->rememberToken();
             $table->softDeletes();
