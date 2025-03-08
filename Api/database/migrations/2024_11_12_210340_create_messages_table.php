@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->ulid('idMessage')->primary();
-            $table->ulid('sender_id');
-            $table->ulid('receiver_id');
+            $table->foreignUlid('sender_id')->nullable()->references('idUser')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignUlid('receiver_id')->nullable()->references('idUser')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->text('content');
-            $table->timestamp('sent_at');
+            $table->timestamp('sent_at')->default(now());
             $table->timestamps();
         });
     }
