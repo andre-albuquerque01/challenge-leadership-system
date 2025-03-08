@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AssignmentsController;
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,4 +33,8 @@ Route::prefix('v1')->group(function () {
 
     Route::apiResource('/assignments', AssignmentsController::class)->middleware('auth:sanctum');
     Route::get('/showUser', [AssignmentsController::class, 'showUser'])->middleware('auth:sanctum');
+
+    Route::get('message/show/{id}', [MessageController::class, 'show'])->middleware('auth:sanctum');
+    Route::get('/message/user/show', [MessageController::class, 'showUser'])->middleware('auth:sanctum');
+    Route::post('message/send', [MessageController::class, 'store'])->middleware('auth:sanctum');
 });
