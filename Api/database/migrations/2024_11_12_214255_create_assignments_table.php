@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('assignments', function (Blueprint $table) {
             $table->ulid('idAssignment')->primary();
-            // $table->ulid('idMember');
-            // $table->ulid('idLeader');
             $table->foreignUlid('idMember')->nullable()->references('idUser')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignUlid('idLeader')->nullable()->references('idUser')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
