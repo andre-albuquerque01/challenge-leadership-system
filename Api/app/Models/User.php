@@ -67,4 +67,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Assignments::class, 'idLeader', 'idUser');
     }
+    public function senderMessage()
+    {
+        return $this->hasMany(Messages::class, 'sender_id', 'idUser');
+    }
+    public function receiverMessage()
+    {
+        return $this->hasMany(Messages::class, 'receiver_id', 'idUser');
+    }
 }
