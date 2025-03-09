@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\AssignmentsInterface;
 use App\Exceptions\GeneralExceptionCatch;
 use App\Http\Resources\AssignmentsResource;
 use App\Http\Resources\GeneralResource;
@@ -9,7 +10,7 @@ use App\Models\Assignments;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class AssignmentsService
+class AssignmentsService implements AssignmentsInterface
 {
     public function index()
     {
@@ -35,7 +36,7 @@ class AssignmentsService
     public function showUser()
     {
         try {
-            $assignments = Assignments::with(['userMember', 'userLeader'])->where('idMember', Auth::user()->idUser)
+            $assignments = Assignments::with(['userMember', 'userLeader'])->where('idMember', 'Auth::user()->idUser')
                 ->orWhere('idLeader', Auth::user()->idUser)
                 ->get();
 
@@ -52,9 +53,9 @@ class AssignmentsService
         try {
             $user = User::where('idUser', $data['idLeader'])->where('role', 'leader')->first();
             if (!$user) {
-                return new GeneralResource(['message' => 'user not found']);
+                return response()->json(['message' => 'user not leader'], 401);
             }
-            
+
             Assignments::create($data);
             return response()->json(["message" => "success"], 204);
         } catch (\Exception $e) {
@@ -79,7 +80,7 @@ class AssignmentsService
     public function destroy(string $id)
     {
         try {
-            $assignments = Assignments::where('idAssignment', $id);
+            $assignments = Assignments::where('idAssignment', $id)->first();
             if (!$assignments) {
                 return response()->json(["message" => "Assignment not found"], 404);
             }
