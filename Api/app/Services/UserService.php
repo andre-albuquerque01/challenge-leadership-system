@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\VerifyEmailEvent;
 use App\Exceptions\GeneralExceptionCatch;
 use App\Exceptions\UserException;
 use App\Http\Resources\AuthLoginResource;
@@ -12,6 +11,7 @@ use App\Jobs\SendRecoverPasswordEmailJob;
 use App\Jobs\SendVerifyEmailJob;
 use App\Models\Regions;
 use App\Models\User;
+use App\UserInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +19,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
-class UserService
+class UserService implements UserInterface
 {
     public function __construct(private Request $request) {}
 
@@ -142,7 +142,7 @@ class UserService
         }
     }
 
-    public function destroy(): GeneralResource
+    public function destroy()
     {
         try {
             $user = User::where('idUser', Auth::user()->idUser)->first();
@@ -177,7 +177,7 @@ class UserService
                     'created_at' => now(),
                 ]);
             }
-            dispatch(new SendRecoverPasswordEmailJob($user->email, $token));
+            SendRecoverPasswordEmailJob::dispatch($user->email, $token);
 
             return new GeneralResource(['message' => 'send e-mail']);
         } catch (\Exception $e) {
@@ -224,7 +224,7 @@ class UserService
             if (!$user) {
                 return response()->json(['message' => 'user not found'], 404);
             }
-            dispatch(new SendVerifyEmailJob($user->email, $user->remember_token, $user->idUser));
+            SendVerifyEmailJob::dispatch($user->email, $user->remember_token, $user->idUser);
 
             return new GeneralResource(['message' => 'send e-mail']);
         } catch (\Exception $e) {
